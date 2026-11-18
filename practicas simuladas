@@ -87,7 +87,3 @@ class AsesoriaEspecializada(Servicio):
 # ==========================================
 # 4. GESTIÓN DE RESERVAS Y LÓGICA DE NEGOCIO
 # ==========================================
-class Reserva:
-
-    def procesar_reserva(self):
-        
