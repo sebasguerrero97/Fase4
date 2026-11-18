@@ -88,13 +88,6 @@ class AsesoriaEspecializada(Servicio):
 # 4. GESTIÓN DE RESERVAS Y LÓGICA DE NEGOCIO
 # ==========================================
 class Reserva:
-    def __init__(self, id_reserva: str, cliente: Cliente, servicio: Servicio, duracion: int):
-        self.id_reserva = id_reserva
-        self.cliente = cliente
-        self.servicio = servicio
-        self.duracion = duracion
-        self.estado = "Activa"
-        self.costo_total = 0.0
 
     def procesar_reserva(self):
         
