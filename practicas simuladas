@@ -97,4 +97,4 @@ class Reserva:
         self.costo_total = 0.0
 
     def procesar_reserva(self):
-        if isinstance(self.servicio, ReservaSalas):
+        
