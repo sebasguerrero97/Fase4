@@ -168,3 +168,32 @@ reserva = Reserva(id_reserva, cliente_encontrado, servicio_encontrado, duracion)
 # ==========================================
 def ejecutar_simulacion_10_operaciones():
     print("==================================================")
+ print(" INICIANDO SIMULACIÓN DE 10 OPERACIONES (SOFTWARE FJ)")
+    print("==================================================\n")
+    
+    sistema = SistemaGestion()
+
+    # Pre-cargamos servicios del sistema
+    sistema.registrar_servicio(ReservaSalas("S01", "Sala Ejecutiva de Reuniones", 50.0))
+    sistema.registrar_servicio(AlquilerEquipos("E01", "Kit de Equipos Audiovisuales 4K", 30.0))
+    sistema.registrar_servicio(AsesoriaEspecializada("A01", "Consultoría TI Especializada", 100.0))
+
+    # Lista con las 10 operaciones requeridas (exitosas y fallidas)
+    operaciones = [
+        # 1. Registro válido de cliente
+        lambda: sistema.registrar_cliente("C01", "Carlos Pérez", "carlos@mail.com", "3001234567"),
+        
+        # 2. Registro inválido de cliente (faltan datos obligatorios)
+        lambda: sistema.registrar_cliente("", "Ana Gómez", "ana@mail.com", "3119876543"),
+        
+        # 3. Registro válido de segundo cliente
+        lambda: sistema.registrar_cliente("C02", "María Rodríguez", "maria@mail.com", "3201112233"),
+        
+        # 4. Registro inválido de cliente (ID duplicado)
+        lambda: sistema.registrar_cliente("C01", "Carlos Duplicado", "carlos2@mail.com", "3000000000"),
+        
+        # 5. Reserva exitosa (Sala ejecutiva por 4 horas)
+        lambda: sistema.crear_reserva("R01", "C01", "S01", 4),
+        
+        # 6. Reserva fallida (Cliente no registrado)
+        lambda: sistema.crear_reserva("R02", "C99", "S01", 2),
