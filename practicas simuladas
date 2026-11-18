@@ -148,3 +148,23 @@ class SistemaGestion:
                 raise ReservaInvalidaException("La duración de la reserva debe ser mayor a cero.")
 
             # Crear y procesar reserva
+reserva = Reserva(id_reserva, cliente_encontrado, servicio_encontrado, duracion)
+            reserva.procesar_reserva()
+            self.reservas.append(reserva)
+            
+            LogManager.registrar("INFO", f"Reserva {id_reserva} creada con éxito para {cliente_encontrado.nombre}. Total: ${reserva.costo_total:.2f}")
+            print(f"-> [Éxito] Reserva {id_reserva} procesada. Costo Total: ${reserva.costo_total:.2f}")
+
+        except SoftwareFJException as e:
+            LogManager.registrar("ERROR", f"Fallo al crear reserva {id_reserva}: {str(e)}")
+            print(f"-> [Error de Negocio Controlado] {e}")
+        except Exception as e:
+            LogManager.registrar("CRITICO", f"Error inesperado en reserva {id_reserva}: {str(e)}")
+            print(f"-> [Error Inesperado] {e}")
+
+
+# ==========================================
+# 5. BLOQUE DE SIMULACIÓN (10 OPERACIONES)
+# ==========================================
+def ejecutar_simulacion_10_operaciones():
+    print("==================================================")
