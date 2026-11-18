@@ -48,3 +48,53 @@ class EntidadBase(ABC):
         self._id_entidad = id_entidad
 
     @property
+def id_entidad(self):
+        return self._id_entidad
+
+class Cliente(EntidadBase):
+    def __init__(self, id_entidad: str, nombre: str, email: str, telefono: str):
+        super().__init__(id_entidad)
+        self.nombre = nombre
+        self.email = email
+        self.telefono = telefono
+
+class Servicio(ABC):
+    """Clase abstracta Servicio para implementar polimorfismo."""
+    def __init__(self, codigo: str, nombre: str, costo_base: float):
+        self.codigo = codigo
+        self.nombre = nombre
+        self.costo_base = costo_base
+
+    @abstractmethod
+    def calcular_costo(self, *args, **kwargs) -> float:
+        pass
+
+# Servicios especializados (Herencia y Polimorfismo)
+class ReservaSalas(Servicio):
+    def calcular_costo(self, horas: int, impuesto: float = 0.19) -> float:
+        return (self.costo_base * horas) * (1 + impuesto)
+
+class AlquilerEquipos(Servicio):
+    def calcular_costo(self, dias: int, descuento: float = 0.0) -> float:
+        total = (self.costo_base * dias) - descuento
+        return max(0.0, total)
+
+class AsesoriaEspecializada(Servicio):
+    def calcular_costo(self, sesiones: int) -> float:
+        return self.costo_base * sesiones
+
+
+# ==========================================
+# 4. GESTIÓN DE RESERVAS Y LÓGICA DE NEGOCIO
+# ==========================================
+class Reserva:
+    def __init__(self, id_reserva: str, cliente: Cliente, servicio: Servicio, duracion: int):
+        self.id_reserva = id_reserva
+        self.cliente = cliente
+        self.servicio = servicio
+        self.duracion = duracion
+        self.estado = "Activa"
+        self.costo_total = 0.0
+
+    def procesar_reserva(self):
+        if isinstance(self.servicio, ReservaSalas):
