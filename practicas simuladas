@@ -1,0 +1,26 @@
+import datetime
+from abc import ABC, abstractmethod
+
+# ==========================================
+# 1. SISTEMA DE LOGS Y ARCHIVO
+# ==========================================
+class LogManager:
+    """Clase encargada de registrar todos los eventos y errores del sistema en un archivo de log."""
+    LOG_FILE = "sistema.log"
+
+    @classmethod
+    def registrar(cls, nivel: str, mensaje: str):
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = f"[{timestamp}] [{nivel.upper()}] {mensaje}\n"
+        try:
+            with open(cls.LOG_FILE, "a", encoding="utf-8") as f:
+                f.write(log_entry)
+        except Exception as e:
+            print(f"Error crítico al escribir en el log: {e}")
+
+
+# ==========================================
+# 2. EXCEPCIONES PERSONALIZADAS
+# ==========================================
+class SoftwareFJException(Exception):
+    """Excepción base para los errores del sistema de Software FJ."""
