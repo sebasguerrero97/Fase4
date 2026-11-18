@@ -37,3 +37,14 @@ class ServicioNoDisponibleException(SoftwareFJException):
 class ReservaInvalidaException(SoftwareFJException):
     def __init__(self, mensaje="Los datos de la reserva contienen inconsistencias o parámetros inválidos."):
         super().__init__(mensaje)
+
+
+# ==========================================
+# 3. CLASES Y JERARQUÍA ORIENTADA A OBJETOS
+# ==========================================
+class EntidadBase(ABC):
+    """Clase abstracta general del sistema."""
+    def __init__(self, id_entidad: str):
+        self._id_entidad = id_entidad
+
+    @property
