@@ -24,7 +24,7 @@ class LogManager:
 # ==========================================
 class SoftwareFJException(Exception):
     """Excepción base para los errores del sistema de Software FJ."""
- pass
+    pass
 
 class ClienteNoEncontradoException(SoftwareFJException):
     def __init__(self, mensaje="El cliente especificado no está registrado o sus datos son inválidos."):
@@ -48,7 +48,7 @@ class EntidadBase(ABC):
         self._id_entidad = id_entidad
 
     @property
-def id_entidad(self):
+    def id_entidad(self):
         return self._id_entidad
 
 class Cliente(EntidadBase):
@@ -148,7 +148,7 @@ class SistemaGestion:
                 raise ReservaInvalidaException("La duración de la reserva debe ser mayor a cero.")
 
             # Crear y procesar reserva
-reserva = Reserva(id_reserva, cliente_encontrado, servicio_encontrado, duracion)
+            reserva = Reserva(id_reserva, cliente_encontrado, servicio_encontrado, duracion)
             reserva.procesar_reserva()
             self.reservas.append(reserva)
             
@@ -168,7 +168,7 @@ reserva = Reserva(id_reserva, cliente_encontrado, servicio_encontrado, duracion)
 # ==========================================
 def ejecutar_simulacion_10_operaciones():
     print("==================================================")
- print(" INICIANDO SIMULACIÓN DE 10 OPERACIONES (SOFTWARE FJ)")
+    print(" INICIANDO SIMULACIÓN DE 10 OPERACIONES (SOFTWARE FJ)")
     print("==================================================\n")
     
     sistema = SistemaGestion()
@@ -197,3 +197,32 @@ def ejecutar_simulacion_10_operaciones():
         
         # 6. Reserva fallida (Cliente no registrado)
         lambda: sistema.crear_reserva("R02", "C99", "S01", 2),
+        
+        # 7. Reserva exitosa (Alquiler de equipos por 3 días)
+        lambda: sistema.crear_reserva("R03", "C02", "E01", 3),
+        
+        # 8. Reserva fallida (Código de servicio inexistente)
+        lambda: sistema.crear_reserva("R04", "C01", "X99", 5),
+        
+        # 9. Reserva exitosa (Asesoría especializada por 2 sesiones)
+        lambda: sistema.crear_reserva("R05", "C02", "A01", 2),
+        
+        # 10. Reserva fallida (Duración igual a cero o inválida)
+        lambda: sistema.crear_reserva("R06", "C02", "A01", 0)
+    ]
+
+    # Ejecutar secuencialmente
+    for i, op in enumerate(operaciones, start=1):
+        print(f"--- Op: {i} ---")
+        try:
+            op()
+        except Exception:
+            pass # Las excepciones se manejan de forma interna y se registran en el archivo log
+        print("")
+
+    print("==================================================")
+    print(" SIMULACIÓN FINALIZADA. Revisa el archivo 'sistema.log'")
+    print("==================================================")
+
+if __name__ == "__main__":
+    ejecutar_simulacion_10_operaciones()
