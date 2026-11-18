@@ -87,3 +87,64 @@ class AsesoriaEspecializada(Servicio):
 # ==========================================
 # 4. GESTIÓN DE RESERVAS Y LÓGICA DE NEGOCIO
 # ==========================================
+class Reserva:
+    def __init__(self, id_reserva: str, cliente: Cliente, servicio: Servicio, duracion: int):
+        self.id_reserva = id_reserva
+        self.cliente = cliente
+        self.servicio = servicio
+        self.duracion = duracion
+        self.estado = "Activa"
+        self.costo_total = 0.0
+
+    def procesar_reserva(self):
+        if isinstance(self.servicio, ReservaSalas):
+            self.costo_total = self.servicio.calcular_costo(horas=self.duracion)
+        elif isinstance(self.servicio, AlquilerEquipos):
+            self.costo_total = self.servicio.calcular_costo(dias=self.duracion)
+        elif isinstance(self.servicio, AsesoriaEspecializada):
+            self.costo_total = self.servicio.calcular_costo(sesiones=self.duracion)
+        else:
+            raise ReservaInvalidaException("Tipo de servicio desconocido para procesar la reserva.")
+
+class SistemaGestion:
+    def __init__(self):
+        self.clientes = []
+        self.servicios = []
+        self.reservas = []
+
+    def registrar_cliente(self, id_entidad, nombre, email, telefono):
+        if not id_entidad or not nombre or not email:
+            LogManager.registrar("ERROR", f"Intento fallido de registrar cliente con datos incompletos: ID={id_entidad}")
+            raise ClienteNoEncontradoException("Los datos del cliente no pueden estar vacíos.")
+        
+        for c in self.clientes:
+            if c.id_entidad == id_entidad:
+                LogManager.registrar("ADVERTENCIA", f"Cliente duplicado detectado: ID {id_entidad}")
+                raise ClienteNoEncontradoException(f"El cliente con ID {id_entidad} ya existe.")
+
+        nuevo_cliente = Cliente(id_entidad, nombre, email, telefono)
+        self.clientes.append(nuevo_cliente)
+        LogManager.registrar("INFO", f"Cliente registrado exitosamente: {nombre} (ID: {id_entidad})")
+        print(f"-> [Éxito] Cliente {nombre} registrado correctamente.")
+
+    def registrar_servicio(self, servicio: Servicio):
+        self.servicios.append(servicio)
+        LogManager.registrar("INFO", f"Servicio registrado: {servicio.nombre} (Código: {servicio.codigo})")
+
+    def crear_reserva(self, id_reserva, id_cliente, codigo_servicio, duracion):
+        try:
+            # Buscar cliente
+            cliente_encontrado = next((c for c in self.clientes if c.id_entidad == id_cliente), None)
+            if not cliente_encontrado:
+                raise ClienteNoEncontradoException(f"No se encontró el cliente con ID {id_cliente}.")
+
+            # Buscar servicio
+            servicio_encontrado = next((s for s in self.servicios if s.codigo == codigo_servicio), None)
+            if not servicio_encontrado:
+                raise ServicioNoDisponibleException(f"El servicio con código {codigo_servicio} no está disponible.")
+
+            # Validar duración estricta
+            if duracion <= 0:
+                raise ReservaInvalidaException("La duración de la reserva debe ser mayor a cero.")
+
+            # Crear y procesar reserva
